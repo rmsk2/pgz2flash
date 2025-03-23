@@ -121,7 +121,7 @@ flash image. I expect such programs to work just fine as a KUP but they still ne
 You will need a Go compiler, a Python interpreter, `64tass` and GNU make to build this software. Building is done in three steps. At first the assembly loader is compiled. 
 The result  is the loader binary and a label file. Then the loader binary is transformed into Go source code and stored in the file `loader.go`. Finally `pgz2flash` is built 
 using `go build`. This whole process is automated in the provided `makefile`. Simply use `make` to build the binary. As usual the target `clean` can be used to delete
-all intermediary files.
+all intermediary files. When building under Windows you have to call make as follows `make WIN=1`.
 
 If the assembly source code is modified you have to make sure that the following label values do match the corresponding constants in the Go program
 
