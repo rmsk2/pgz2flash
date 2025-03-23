@@ -78,10 +78,10 @@ Overall 17 of 64 copy instructions were used
 
 # How does this work?
 
-The Go program configures an assembly loader which copies the data contained in the PGZ file to the specified load addresses just as `pexec` would do. Additionally
-the Go program removes the length and address fields of the PGZ and prepends the configured loader to the concatenation of the pure segment data. What do I mean by
-configured? The Go program adds data to the loader binary (which can be found in the `loader.go` file) which defines copy operations to be performed upon program start.
-When the loader is started by the Kernel it interprets this data in order to perform the neccessary copy operations. The address space of the F256 machines is segmented 
+The Go program configures an assembly loader which copies the data contained in the PGZ file from flash to the specified load addresses just as `pexec` would do with data read
+from a file. Additionally the Go program removes the length and address fields of the PGZ and prepends the configured loader to the concatenation of the pure segment data. What
+do I mean by configured? The Go program adds data to the loader binary (which can be found in the `loader.go` file) which defines copy operations to be performed upon program
+start. When the loader is started by the Kernel it interprets this data in order to perform the neccessary copy operations. The address space of the F256 machines is segmented 
 into 8K blocks and this makes copying data not as straight forward as one would like. Due to this fact copying a segement often requires more than one copy operation.
 
 # Limitations
@@ -90,9 +90,24 @@ The loader is mapped to RAM block 5, i.e. it becomes visible at at address $A000
 of the original PGZ must not be in the area of $A000-$BFFF. The last operation performed by the loader is a `JMP` to the start address of the PGZ and if the loader would map
 itself out of this RAM block it would pull the rug from under its own feet before being able to execute the `JMP`instruction.
 
-I have tested quite a few PGZ files with this program and encountered one case (`spooky.pgz` of the October 2024 game jam) where the resulting KUP would not run correctly. At 
-the moment I assume that this has nothing to do with the transformation process but is caused by missing initializations (for instance done by SuperBASIC or `pexec`) on which 
-the software unknowingly depends but which are not happening when being started as a KUP via the `loader`.
+Another thing to remember is that if your program depends on files which have to be read from a drive for initialization purposes then these files will not become part of the 
+flash image. I expect such programs to work just fine as a KUP but they still need their files stored on disk in order to run. I have tested the following programs which I could
+successfully transform into a fully working KUP:
+
+- Kooyan (October 2024 game jam)
+- My own 2048 game
+- Trick or treat (October 2024 game jam)
+- The LLVM-MOS helicopter demo (compiled by myself a while ago)
+- fnxsnake (October 2024 game jam)
+- My own snake game (October 2024 game jam)
+- BachHero (October 2024 game jam)
+
+I encountered one case (`spooky.pgz` of the October 2024 game jam) where the resulting KUP would not run correctly. At the moment I assume that this has nothing to do with the
+transformation process but is caused by missing initializations (for instance done by SuperBASIC or `pexec`) on which the software unknowingly depends but which are not happening 
+when being started as a KUP via the `loader`.
+
+For one october 2024 Game Jam contestant `warlock.pgz` the transformation failed as it generated too many copy operations. The cause for this are the file size of over 300K and the
+number of segments. As the limit on copy operations is pretty arbitrary this could be made to work in the future.
 
 # Building the program
 
