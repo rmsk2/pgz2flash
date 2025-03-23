@@ -25,7 +25,7 @@ Use `-pgz` to specify the file in which the PGZ program which you want to conver
 name by which the KUP is listed via `lsf` in DOS. This name must also be used to start the KUP. I.e. when the string `test` is used
 as the value of the `-name` option the program must be started as `/test`. The value of `-desc` can be used to define the program description
 shown by `lsf`. `-out` sets the name of the file in which the conversion result is stored. Before you can run the resulting KUP you have to write
-it either to onboard flash via `foenixmgr` or to a flash cartridge via `fcart`. The `-version` option can be used to retreive version
+it either to onboard flash via `foenixmgr` or to a flash cartridge via `fcart`. The `-version` option can be used to retrieve version
 information of your copy of `pgz2flash`.
 
 When you run `pgz2flash`, information about the structure of the PGZ file which is to be converted is shown. Additionally information about the 
@@ -84,15 +84,9 @@ do I mean by configured? The Go program adds data to the loader binary (which ca
 start. When the loader is started by the Kernel it interprets this data in order to perform the neccessary copy operations. The address space of the F256 machines is segmented 
 into 8K blocks and this makes copying data not as straight forward as one would like. Due to this fact copying a segement often requires more than one copy operation.
 
-# Limitations
+# Test results
 
-The loader is mapped to RAM block 5, i.e. it becomes visible at at address $A000 in the CPUs 16 bit address space. From this follows the requirement that the start address
-of the original PGZ must not be in the area of $A000-$BFFF. The last operation performed by the loader is a `JMP` to the start address of the PGZ and if the loader would map
-itself out of this RAM block it would pull the rug from under its own feet before being able to execute the `JMP`instruction.
-
-Another thing to remember is that if your program depends on files which have to be read from a drive for initialization purposes then these files will not become part of the 
-flash image. I expect such programs to work just fine as a KUP but they still need their files stored on disk in order to run. I have tested the following programs which I could
-successfully transform into a fully working KUP:
+ I have tested the following programs which I could successfully transform into a fully working KUP:
 
 - Kooyan (October 2024 game jam)
 - My own 2048 game
@@ -107,7 +101,16 @@ transformation process but is caused by missing initializations (for instance do
 when being started as a KUP via the `loader`.
 
 For one october 2024 Game Jam contestant `warlock.pgz` the transformation failed as it generated too many copy operations. The cause for this are the file size of over 300K and the
-number of segments. As the limit on copy operations is pretty arbitrary this could be made to work in the future.
+number of PGZ segments. As the limit on copy operations is totally arbitrary this probably will work in the future, too.
+
+# Limitations
+
+The loader is mapped to RAM block 5, i.e. it becomes visible at at address $A000 in the CPUs 16 bit address space. From this follows the requirement that the start address
+of the original PGZ must not be in the area of $A000-$BFFF. The last operation performed by the loader is a `JMP` to the start address of the PGZ and if the loader would map
+itself out of this RAM block it would pull the rug from under its own feet before being able to execute the `JMP`instruction.
+
+Another thing to remember is that if your program depends on files which have to be read from a drive for initialization purposes then these files will not become part of the 
+flash image. I expect such programs to work just fine as a KUP but they still need their files stored on disk in order to run.
 
 # Building the program
 
