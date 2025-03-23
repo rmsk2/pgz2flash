@@ -137,3 +137,7 @@ If the assembly source code is modified you have to make sure that the following
 Additional modifications have to be performed when the maximum number of copy instructions is to be increased. You have to make room for them by changing the `.fill` directive
 at `ADDR_INSTRUCTIONS` and after that you can adapt `MaxCopyInstructions` on the Go side. Similar preparations have to be made when increasing the space for the program name
 and the description which are stored at `ADDR_DESCRIPTION`.
+
+# Prebuilt Windows Binaries
+
+You will find a prebuilt Windows binary (`pgz2flash.exe`) in the Releases section of this repo.
