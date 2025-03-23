@@ -259,7 +259,6 @@ func (p *PgzFile) CreateCopyInstructions(image []byte, index map[uint]uint, numB
 		}
 
 		instructions = append(instructions, newInst...)
-
 	}
 
 	fmt.Println("---------- Stop instruction")

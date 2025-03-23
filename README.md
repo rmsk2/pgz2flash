@@ -81,7 +81,7 @@ Overall 17 of 64 copy instructions were used
 The Go program configures an assembly loader which copies the data contained in the PGZ file to the specified load addresses just as `pexec` would do. Additionally
 the Go program removes the length and address fields of the PGZ and prepends the configured loader to the concatenation of the pure segment data. What do I mean by
 configured? The Go program adds data to the loader binary (which can be found in the `loader.go` file) which defines copy operations to be performed upon program start.
-When the loader is started by the kernel it interprets this data in order to perform the neccessary copy operations. The address space of the F256 machines is segmented 
+When the loader is started by the Kernel it interprets this data in order to perform the neccessary copy operations. The address space of the F256 machines is segmented 
 into 8K blocks and this makes copying data not as straight forward as one would like. Due to this fact copying a segement often requires more than one copy operation.
 
 # Limitations
@@ -96,8 +96,8 @@ the software unknowingly depends but which are not happening when being started 
 
 # Building the program
 
-You will need a Go compiler, a Python interpreter, `64tass` and GNU make to build this software. Building is done in three steps. At first the loader binary is compiled. 
-The result  is the loader binary and a label file. Then the loader binary is transformed into Go source code stored in the file `loader.go` and finally `pgz2flash` is built 
+You will need a Go compiler, a Python interpreter, `64tass` and GNU make to build this software. Building is done in three steps. At first the assembly loader is compiled. 
+The result  is the loader binary and a label file. Then the loader binary is transformed into Go source code and stored in the file `loader.go`. Finally `pgz2flash` is built 
 using `go build`. This whole process is automated in the provided `makefile`. Simply use `make` to build the binary. As usual the target `clean` can be used to delete
 all intermediary files.
 
