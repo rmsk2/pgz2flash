@@ -320,6 +320,7 @@ func main() {
 	description := runFlags.String("desc", "", "Description shown in lsf")
 	outFile := runFlags.String("out", "", "Output file name")
 	versionFlag := runFlags.Bool("version", false, "Show version information")
+	onboardFlag := runFlags.Bool("onboard", false, "Create separate 8K blocks for use with FoenixMgr")
 
 	if err := runFlags.Parse(os.Args[1:]); err != nil {
 		os.Exit(42)
@@ -389,9 +390,23 @@ func main() {
 		os.Exit(42)
 	}
 
-	err = os.WriteFile(*outFile, image, 0660)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "error writing output file: %v\n", err)
-		os.Exit(42)
+	if !*onboardFlag {
+		err = os.WriteFile(*outFile, image, 0660)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error writing output file: %v\n", err)
+			os.Exit(42)
+		}
+	} else {
+		for i := 0; i < numBlocks; i++ {
+			currentBlock := image[:BlockSize]
+
+			err = os.WriteFile(fmt.Sprintf("%d_%s", i, *outFile), currentBlock, 0660)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error writing output file: %v\n", err)
+				os.Exit(42)
+			}
+
+			image = image[BlockSize:]
+		}
 	}
 }
