@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime/debug"
 )
 
 const (
@@ -289,15 +290,45 @@ func AddDocumentation(data []byte, name string, description string) error {
 	return nil
 }
 
+func showVersion() {
+	var hash string
+	var time string
+
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, setting := range info.Settings {
+			if setting.Key == "vcs.revision" {
+				hash = setting.Value
+				continue
+			}
+
+			if setting.Key == "vcs.time" {
+				time = setting.Value
+				continue
+			}
+		}
+	}
+
+	fmt.Println("Version: 1.0.0")
+	fmt.Println("Written by Martin Grap (@mgr42) in 2025")
+	fmt.Println("See https://github.com/rmsk2/pgz2flash")
+	fmt.Printf("Commit: %s, from: %s\n", hash, time)
+}
+
 func main() {
 	runFlags := flag.NewFlagSet("pgz2flash", flag.ContinueOnError)
 	pgzFileName := runFlags.String("pgz", "", "Path to pgz")
 	progName := runFlags.String("name", "", "Name of program in flash and shown by lsf")
 	description := runFlags.String("desc", "", "Description shown in lsf")
 	outFile := runFlags.String("out", "", "Output file name")
+	versionFlag := runFlags.Bool("version", false, "Show version information")
 
 	if err := runFlags.Parse(os.Args[1:]); err != nil {
 		os.Exit(42)
+	}
+
+	if *versionFlag {
+		showVersion()
+		os.Exit(0)
 	}
 
 	if *pgzFileName == "" {
@@ -341,6 +372,9 @@ func main() {
 	}
 
 	image, ind, numBlocks := pgz.CatenateSegments(loaderBinary)
+	if numBlocks > 32 {
+		fmt.Fprintf(os.Stderr, "Warning: This flash image will not fit on a flash cartridge\n")
+	}
 
 	err = AddDocumentation(image, *progName, *description)
 	if err != nil {
