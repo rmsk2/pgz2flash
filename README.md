@@ -14,7 +14,7 @@ Usage of pgz2flash:
   -name string
     	Name of program in flash and shown by lsf
   -onboard
-    	Create separate blocks for use with FoenixMgr
+    	Create separate 8K blocks for use with FoenixMgr
   -out string
     	Output file name
   -pgz string
@@ -28,7 +28,7 @@ name by which the KUP is listed via `lsf` in DOS. This name must also be used to
 as the value of the `-name` option the program must be started as `/test`. The value of `-desc` can be used to define the program description
 shown by `lsf`. `-out` sets the name of the file in which the conversion result is stored. Before you can run the resulting KUP you have to write
 it either to onboard flash via `FoenixMgr` or to a flash cartridge via `fcart`. The created KUPs are agnostic with respect to their storage 
-location in flash memory. The `-version` option can be used to retrieve version information of your copy of `pgz2flash`. If you intend to write
+location in flash memory. The `-version` option can be used to retrieve version information about your copy of `pgz2flash`. If you intend to write
 the transformation result to onboard flash via `FoenixMgr` you will need separate 8K flash blocks instead of a single cartridge image which is 
 required by `fcart`. Use the option `-onboard` to create the KUP as a collection of 8K blocks which can be processed by `FoenixMgr`.
 
