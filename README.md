@@ -13,8 +13,8 @@ Usage of pgz2flash:
     	Description shown in lsf
   -name string
     	Name of program in flash and shown by lsf
-  -onboard
-    	Create separate 8K blocks for use with FoenixMgr
+  -onboard int
+    	Optional: Create 8K blocks for FoenixMgr. Use param as number of start block. (default -1)
   -out string
     	Output file name
   -pgz string
@@ -30,7 +30,8 @@ shown by `lsf`. `-out` sets the name of the file in which the conversion result 
 it either to onboard flash via `FoenixMgr` or to a flash cartridge via `fcart`. The created KUPs are agnostic with respect to their storage 
 location in flash memory. The `-version` option can be used to retrieve version information about your copy of `pgz2flash`. If you intend to write
 the transformation result to onboard flash via `FoenixMgr` you will need separate 8K flash blocks instead of a single cartridge image which is 
-required by `fcart`. Use the option `-onboard` to create the KUP as a collection of 8K blocks which can be processed by `FoenixMgr`.
+required by `fcart`. Use the option `-onboard` to create the KUP as a collection of 8K blocks which can be processed by `FoenixMgr`. The value 
+of the option `-out` is used to determine the names of the individual blocks and the csv file to control `FoenixMgr`.
 
 When you run `pgz2flash`, information about the structure of the PGZ file which is to be converted is shown. Additionally information about the 
 copy operations (or copy instructions) performed by the loader program are shown. As an example here the data printed when transforming the 

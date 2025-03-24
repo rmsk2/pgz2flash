@@ -307,10 +307,38 @@ func showVersion() {
 		}
 	}
 
-	fmt.Println("Version: 1.0.0")
+	fmt.Println("Version: 1.1.0")
 	fmt.Println("Written by Martin Grap (@mgr42) in 2025")
 	fmt.Println("See https://github.com/rmsk2/pgz2flash")
 	fmt.Printf("Commit: %s, from: %s\n", hash, time)
+}
+
+func WriteOnboardData(image []byte, numBlocks int, outFile *string, onboardStartBlock int) error {
+	csvLines := ""
+	blockNum := onboardStartBlock
+
+	for i := 0; i < numBlocks; i++ {
+		currentBlock := image[:BlockSize]
+
+		fileName := fmt.Sprintf("%s_%02d.bin", *outFile, i)
+
+		err := os.WriteFile(fileName, currentBlock, 0660)
+		if err != nil {
+			return err
+		}
+
+		csvLines += fmt.Sprintf("%02x,%s\n", blockNum, fileName)
+
+		image = image[BlockSize:]
+		blockNum++
+	}
+
+	err := os.WriteFile(fmt.Sprintf("%s.csv", *outFile), []byte(csvLines), 0660)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func main() {
@@ -320,7 +348,7 @@ func main() {
 	description := runFlags.String("desc", "", "Description shown in lsf")
 	outFile := runFlags.String("out", "", "Output file name")
 	versionFlag := runFlags.Bool("version", false, "Show version information")
-	onboardFlag := runFlags.Bool("onboard", false, "Create separate 8K blocks for use with FoenixMgr")
+	onboardStartBlock := runFlags.Int("onboard", -1, "Optional: Create 8K blocks for FoenixMgr. Use param as number of start block.")
 
 	if err := runFlags.Parse(os.Args[1:]); err != nil {
 		os.Exit(42)
@@ -390,23 +418,17 @@ func main() {
 		os.Exit(42)
 	}
 
-	if !*onboardFlag {
+	if *onboardStartBlock < 0 {
 		err = os.WriteFile(*outFile, image, 0660)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error writing output file: %v\n", err)
 			os.Exit(42)
 		}
 	} else {
-		for i := 0; i < numBlocks; i++ {
-			currentBlock := image[:BlockSize]
-
-			err = os.WriteFile(fmt.Sprintf("%d_%s", i, *outFile), currentBlock, 0660)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "error writing output file: %v\n", err)
-				os.Exit(42)
-			}
-
-			image = image[BlockSize:]
+		err = WriteOnboardData(image, numBlocks, outFile, *onboardStartBlock)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error writing output file: %v\n", err)
+			os.Exit(42)
 		}
 	}
 }
