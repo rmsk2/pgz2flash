@@ -100,17 +100,18 @@ into 8K blocks and this makes copying data not as straight forward as one would 
 - fnxsnake (October 2024 game jam)
 - My own snake game (October 2024 game jam)
 - BachHero (October 2024 game jam)
+- The Hallow (October 2024 game jam)
 
 I encountered one case (`spooky.pgz` of the October 2024 game jam) where the resulting KUP would not run correctly. At the moment I assume that this has nothing to do with the
 transformation process but is caused by missing initializations (for instance done by SuperBASIC or `pexec`) on which the software unknowingly depends but which are not happening 
 when being started as a KUP via the `loader`.
 
-For one october 2024 Game Jam contestant `warlock.pgz` the transformation failed as it generated too many copy operations. The cause for this are the file size of over 300K and the
-number of PGZ segments. As the limit on copy operations is totally arbitrary this probably will work in the future, too.
+For one October 2024 Game Jam contestant `warlock.pgz` the transformation worked but I was unable to test the resulting flash image as it did not fit on a flash cartridge and in fact
+it did also not fit into the remaining onboard flash.
 
 # Limitations
 
-The loader is mapped to RAM block 5, i.e. it becomes visible at at address $A000 in the CPUs 16 bit address space. From this follows the requirement that the start address
+The loader is mapped to memory bank 5, i.e. it becomes visible at at address $A000 in the CPUs 16 bit address space. From this follows the requirement that the start address
 of the original PGZ must not be in the area of $A000-$BFFF. The last operation performed by the loader is a `JMP` to the start address of the PGZ and if the loader would map
 itself out of this RAM block it would pull the rug from under its own feet before being able to execute the `JMP`instruction.
 

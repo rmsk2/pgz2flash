@@ -118,6 +118,10 @@ loader
     sta 0
     lda #%00000000                         ; enable io pages and set active page to 0
     sta 1
+    ; turn cursor off
+    lda #%11111110
+    and $D010
+    sta $D010
     ; set MEM_PTR3 to start of copy instructions
     #load16BitImmediate ADDR_INSTRUCTIONS, MEM_PTR3
 _blockLoop
@@ -187,7 +191,7 @@ _bytesToCopy
 ; ******************
 ; This has to be rewritten by the tool on the PC side
 ; ******************
-ADDR_INSTRUCTIONS .fill 511
+ADDR_INSTRUCTIONS .fill 767
 ; B1 .dstruct Block_t, 4774, $8000 + END - LOAD_ADDRESS + 1, $6300, 0, 0
 ; B2 .dstruct Block_t, 0, $0300, 0, 0, 0
 
