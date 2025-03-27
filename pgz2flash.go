@@ -114,7 +114,7 @@ func (p *PgzFile) PrintInfo() {
 	fmt.Println("=============")
 
 	for i, j := range p.Segments {
-		fmt.Printf("%02d. Load address $%06X, Length $%06X\n", i+1, j.Address, len(j.Data))
+		fmt.Printf("%02d. Target address $%06X, Length $%06X\n", i+1, j.Address, len(j.Data))
 	}
 }
 
@@ -267,7 +267,7 @@ func (p *PgzFile) CreateCopyInstructions(image []byte, index map[uint]uint, numB
 	instructions = append(instructions, stopInstruction.toSlice()...)
 
 	copy(image[CopyInstructions:], instructions)
-	fmt.Printf("\nOverall %d of %d copy instructions were used\n\n", numInstructions, MaxCopyInstructions)
+	fmt.Printf("\nOverall %d of %d copy instructions were used\n", numInstructions, MaxCopyInstructions)
 
 	return nil
 }
@@ -307,7 +307,7 @@ func showVersion() {
 		}
 	}
 
-	fmt.Println("Version: 1.1.1")
+	fmt.Println("Version: 1.1.2")
 	fmt.Println("Written by Martin Grap (@mgr42) in 2025")
 	fmt.Println("See https://github.com/rmsk2/pgz2flash")
 	fmt.Printf("Commit: %s, from: %s\n", hash, time)
@@ -415,11 +415,17 @@ func main() {
 		os.Exit(42)
 	}
 
+	fmt.Printf("%d flash blocks were used\n\n", numBlocks)
+
 	if *onboardStartBlock < 0 {
 		err = os.WriteFile(*outFile, image, 0660)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "error writing output file: %v\n", err)
 			os.Exit(42)
+		}
+
+		if numBlocks > 32 {
+			fmt.Fprintf(os.Stderr, "Warning: This flash image will not fit on a flash cartridge\n")
 		}
 	} else {
 		lastBlockNum, err := WriteOnboardData(image, numBlocks, outFile, *onboardStartBlock)
@@ -431,9 +437,5 @@ func main() {
 		if lastBlockNum >= 0x3b {
 			fmt.Fprintf(os.Stderr, "Warning: If you use these flash blocks you will overwrite your kernel. That's probably not what you want!!!\n")
 		}
-	}
-
-	if numBlocks > 32 {
-		fmt.Fprintf(os.Stderr, "Warning: This flash image will not fit on a flash cartridge\n")
 	}
 }
