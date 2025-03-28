@@ -395,7 +395,7 @@ func main() {
 	fmt.Println()
 
 	if (pgz.StartAddress >= 0xA000) && (pgz.StartAddress < 0xC000) {
-		fmt.Fprintf(os.Stderr, "this PGZ has a start address in RAM block 5 which is not supported: %06x\n", pgz.StartAddress)
+		fmt.Fprintf(os.Stderr, "this PGZ has a start address in memory bank 5 which is not supported: %06x\n", pgz.StartAddress)
 		os.Exit(42)
 	}
 
