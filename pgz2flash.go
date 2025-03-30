@@ -11,7 +11,7 @@ const (
 	LoadAddress        uint = 0xA000
 	DescriptionAddress uint = 0xA00A - LoadAddress
 	NumBlocksAddress   uint = 0xA002 - LoadAddress
-	CopyInstructions   uint = 0xA0FD - LoadAddress
+	CopyInstructions   uint = 0xA110 - LoadAddress
 	SourceWindow       uint = 0x8000
 	TargetWindow       uint = 0x6000
 )
@@ -393,11 +393,6 @@ func main() {
 
 	pgz.PrintInfo()
 	fmt.Println()
-
-	if (pgz.StartAddress >= 0xA000) && (pgz.StartAddress < 0xC000) {
-		fmt.Fprintf(os.Stderr, "this PGZ has a start address in memory bank 5 which is not supported: %06x\n", pgz.StartAddress)
-		os.Exit(42)
-	}
 
 	image, ind, numBlocks := pgz.CatenateSegments(loaderBinary)
 

@@ -29,11 +29,13 @@ ADDR_DESCRIPTION
 PADDING_BYTES = 64
 .fill PADDING_BYTES
 
-TARGET_VECTOR = $0092;00$93
+
 NUM_BYTES     = $94;$95
 MEM_PTR1      = $9A;$9B
 MEM_PTR2      = $9C;$9D
 MEM_PTR3      = $9E;$9F
+TRAMPOLINE    = $A0;- $A6
+TARGET_VECTOR = $A7;$A8
 
 ; --------------------------------------------------
 ; load16BitImmediate loads the 16 bit value given in .val into the memory location given
@@ -111,7 +113,7 @@ _done
     rts
 .endnamespace
 
-
+TRAMPOLINE_DATA .byte $a9, $05, $85, $0d, $6c, $a7, $00
 
 loader
     lda #%10110011                         ; set active and edit LUT to three and allow editing
@@ -148,7 +150,14 @@ _blockLoop
     ; we can not change MMU_CTRL as we would map out this code
     ; jmp to target address which must not be in RAM block 5, i.e. in the block where this code
     ; was mapped by the kernel
-    jmp (TARGET_VECTOR)
+    ldx #0
+_loop
+    lda TRAMPOLINE_DATA, x
+    sta TRAMPOLINE, x
+    inx
+    cpx #len(TRAMPOLINE_DATA)
+    bne _loop
+    jmp TRAMPOLINE
 _bytesToCopy
     ; there is data to copy
     ; copy data length

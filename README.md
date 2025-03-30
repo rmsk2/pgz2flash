@@ -111,12 +111,8 @@ it did also not fit into the remaining onboard flash.
 
 # Limitations
 
-The loader is mapped to memory bank 5, i.e. it becomes visible at at address $A000 in the CPUs 16 bit address space. From this follows the requirement that the start address
-of the original PGZ must not be in the area of $A000-$BFFF. The last operation performed by the loader is a `JMP` to the start address of the PGZ and if the loader would map
-itself out of this RAM block it would pull the rug from under its own feet before being able to execute the `JMP`instruction.
-
-Another thing to remember is that if your program depends on files which have to be read from a drive for initialization purposes then these files will not become part of the 
-flash image. I expect such programs to work just fine as a KUP but they still need their files stored on disk in order to run.
+If your program depends on files which have to be read from a drive for initialization purposes then these files will not become part of the flash image. I expect such programs
+to work just fine as a KUP but they still need their files stored on disk in order to run.
 
 # Building the program
 
