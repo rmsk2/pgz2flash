@@ -113,6 +113,10 @@ _done
     rts
 .endnamespace
 
+; trampoline stub
+; lda #5
+; sta 13
+; jmp (TARGET_VECTOR)
 TRAMPOLINE_DATA .byte $a9, $05, $85, $0d, $6c, $a7, $00
 
 loader
@@ -147,9 +151,12 @@ _blockLoop
     sta MMU_SOURCE
     lda #3
     sta MMU_TARGET
-    ; we can not change MMU_CTRL as we would map out this code
-    ; jmp to target address which must not be in RAM block 5, i.e. in the block where this code
-    ; was mapped by the kernel
+    ; we can not change MMU_CTRL in a straight forward way as otherwise we would pull
+    ; the rug from under our own feet.
+    ;
+    ; Instead we copy the little trampoline program to the zero page and then jump
+    ; to it. The trampoline stub unmaps the loader and finally jumps to the target
+    ; address.
     ldx #0
 _loop
     lda TRAMPOLINE_DATA, x
