@@ -307,7 +307,7 @@ func showVersion() {
 		}
 	}
 
-	fmt.Println("Version: 1.3.0")
+	fmt.Println("Version: 1.3.1")
 	fmt.Println("Written by Martin Grap (@mgr42) in 2025")
 	fmt.Println("See https://github.com/rmsk2/pgz2flash")
 	fmt.Printf("Commit: %s, from: %s\n", hash, time)
