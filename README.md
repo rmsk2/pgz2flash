@@ -135,8 +135,19 @@ If the assembly source code is modified you have to make sure that the following
 
 Additional modifications have to be performed when the maximum number of copy instructions is to be increased. You have to make room for them by changing the `.fill` directive
 at `ADDR_INSTRUCTIONS` and after that you can adapt `MaxCopyInstructions` on the Go side. Similar preparations have to be made when increasing the space for the program name
-and the description which are stored at `ADDR_DESCRIPTION`.
+and the description which are stored at `ADDR_DESCRIPTION`. When you use the target `binaries` you can build binaries for the platforms listed below.
 
 # Prebuilt Windows Binaries
 
-You will find a prebuilt Windows binary (`pgz2flash.exe`) in the Releases section of this repo.
+You will find binaries for the following OSs and architectures in the Releases section of this repo.
+
+|OS | Architecture | Binary name |
+|-|-|-|
+|Windows| Intel/Amd64 | `pgz2flash_win_amd64.exe`|
+|macOS| Intel/Amd64 | `pgz2flash_mac_amd64`|
+|macOS| M1/M2/M3/M4/Arm64 | `pgz2flash_mac_arm64`|
+|Linux| Intel/Amd64 | `pgz2flash_linux_amd64`|
+|Linux| 64Bit Raspi/Arm64 | `pgz2flash_linux_arm64`|
+
+Caveats: Be warned that I can not test all these platforms with each release. I also have made the experience once that a go program compiled under some Linux distribution would not run
+on antother distribution.

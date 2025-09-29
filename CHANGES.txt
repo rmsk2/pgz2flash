@@ -1,0 +1,2 @@
+- Automate publishing binaries
+- Also publish binaries for MacOS (amd64, arm64) and Linux (amd64, arm64)
