@@ -13,18 +13,23 @@ jobs:
       - name: Set up 64 tass on Ubuntu
         run: |
           sudo apt-get install 64tass
+      # - name: Setup go
+      #   uses: actions/setup-go@v6
+      #   with:
+      #     go-version: '1.24'
       - name: Build Binaries
         run: |
+          echo go version
           make binaries
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            pgz2flash_win_amd64.exe
-            pgz2flash_mac_amd64
-            pgz2flash_mac_arm64
-            pgz2flash_linux_amd64
-            pgz2flash_linux_arm64            
-          tag_name: ${{ github.ref_name }}
-          body_path: CHANGES.txt
-          token: ${{ secrets.PUBLISH_TOKEN }}
+      # - name: Create GitHub Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     files: |
+      #       pgz2flash_win_amd64.exe
+      #       pgz2flash_mac_amd64
+      #       pgz2flash_mac_arm64
+      #       pgz2flash_linux_amd64
+      #       pgz2flash_linux_arm64            
+      #     tag_name: ${{ github.ref_name }}
+      #     body_path: CHANGES.txt
+      #     token: ${{ secrets.PUBLISH_TOKEN }}
