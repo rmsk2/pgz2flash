@@ -137,7 +137,7 @@ Additional modifications have to be performed when the maximum number of copy in
 at `ADDR_INSTRUCTIONS` and after that you can adapt `MaxCopyInstructions` on the Go side. Similar preparations have to be made when increasing the space for the program name
 and the description which are stored at `ADDR_DESCRIPTION`. When you use the target `binaries` you can build binaries for the platforms listed below.
 
-# Prebuilt Windows Binaries
+# Prebuilt Binaries
 
 You will find binaries for the following OSs and architectures in the Releases section of this repo.
 
@@ -150,4 +150,15 @@ You will find binaries for the following OSs and architectures in the Releases s
 |Linux| 64Bit Raspi/Arm64 | `pgz2flash_linux_arm64`|
 
 Caveats: Be warned that I can not test all these platforms with each release. I also have made the experience once that a go program compiled under some Linux distribution would not run
-on antother distribution.
+on another distribution. 
+
+## Using the binaries on macOS
+
+When you download the executables via the Releases section macOS will refuse to run them. You have to issue the following commands in order to be able to use them. First you have to make 
+sure the file is executable by typing `chmod u+x pgz2flash_mac_arm64` or `chmod u+x pgz2flash_mac_amd64` after that you have to remove the quarantine attribute from the
+files via `xattr -d com.apple.quarantine pgz2flash_mac_arm64` or `xattr -d com.apple.quarantine pgz2flash_mac_amd64`. This could probably be prevented if I would sign the binaries, but
+to be honest, as I am not usually publishing software on macOS I won't pay Apple's developer club membership fee.
+
+## Using the binaries under Windows
+
+When I started the downloaded binary under Windows, the OS wanted to send the program to Microsoft for scanning. I declined that and after that the program would run.
