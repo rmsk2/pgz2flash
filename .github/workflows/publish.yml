@@ -19,7 +19,7 @@ jobs:
       #     go-version: '1.24'
       - name: Build Binaries
         run: |
-          echo go version
+          echo `go version`
           make binaries
       # - name: Create GitHub Release
       #   uses: softprops/action-gh-release@v2
