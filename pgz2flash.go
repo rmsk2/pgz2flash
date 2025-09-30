@@ -58,6 +58,26 @@ type PgzFile struct {
 	Segments     []Segment
 }
 
+func NewPgzFromBasic(fileName string) (*PgzFile, error) {
+	progBytes, err := os.ReadFile(fileName)
+	if err != nil {
+		return nil, err
+	}
+
+	// Add end marker
+	progBytes = append(progBytes, 0x80)
+
+	segStub := NewSegment(0x300, stubBinary)
+	segBasic := NewSegment(0x28000, progBytes)
+
+	res := PgzFile{
+		StartAddress: 0x300,
+		Segments:     []Segment{segStub, segBasic},
+	}
+
+	return &res, nil
+}
+
 func NewPgzFromFile(fileName string) (*PgzFile, error) {
 	progBytes, err := os.ReadFile(fileName)
 	if err != nil {
@@ -344,6 +364,7 @@ func WriteOnboardData(image []byte, numBlocks int, outFile *string, onboardStart
 func main() {
 	runFlags := flag.NewFlagSet("pgz2flash", flag.ContinueOnError)
 	pgzFileName := runFlags.String("pgz", "", "Path to pgz")
+	basicFileName := runFlags.String("basic", "", "Path to BASIC program")
 	progName := runFlags.String("name", "", "Name of program in flash and shown by lsf")
 	description := runFlags.String("desc", "", "Description shown in lsf")
 	outFile := runFlags.String("out", "", "Output file name")
@@ -359,8 +380,13 @@ func main() {
 		os.Exit(0)
 	}
 
-	if *pgzFileName == "" {
-		fmt.Fprintln(os.Stderr, "No PGZ specified")
+	if (*pgzFileName == "") && (*basicFileName == "") {
+		fmt.Fprintln(os.Stderr, "No input file specified")
+		os.Exit(42)
+	}
+
+	if (*pgzFileName != "") && (*basicFileName != "") {
+		fmt.Fprintln(os.Stderr, "Specify either a PGZ oder BASIC program")
 		os.Exit(42)
 	}
 
@@ -385,10 +411,20 @@ func main() {
 		os.Exit(42)
 	}
 
-	pgz, err := NewPgzFromFile(*pgzFileName)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "unable to parse PGZ: %v\n", err)
-		os.Exit(42)
+	var pgz *PgzFile
+
+	if *pgzFileName != "" {
+		pgz, err = NewPgzFromFile(*pgzFileName)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "unable to parse PGZ: %v\n", err)
+			os.Exit(42)
+		}
+	} else {
+		pgz, err = NewPgzFromBasic(*basicFileName)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "unable to load BASIC program: %v\n", err)
+			os.Exit(42)
+		}
 	}
 
 	pgz.PrintInfo()

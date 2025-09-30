@@ -8,11 +8,11 @@ def gen_line(data):
         sys.stdout.write(f"0x{i:02x}, ")
     sys.stdout.write("\n")
 
-with open("loader", "rb") as f:
+with open(sys.argv[1], "rb") as f:
     data = f.read()
 
 print("package main\n\n")
-print("var loaderBinary []byte = []byte {")
+print(f"var {sys.argv[2]} []byte = []byte {{")
 
 while len(data) != 0:
     gen_line(data[:LINE_SIZE])
