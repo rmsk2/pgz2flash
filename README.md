@@ -1,7 +1,11 @@
 
 # About
-This tool can be used to transform (most) Foenix F256 PGZ executable files to Kernel User Programs (KUPs), which can be run from
-onboard or cartridge flash memory.
+This tool can be used to transform (most) Foenix F256 PGZ executable files and SuperBASIC programs to Kernel User Programs (KUPs), which 
+can be run from onboard or cartridge flash memory. 
+
+In the case of SuperBASIC programs it has to be noted that the transformation does not involve any compilation of the BASIC source. 
+`pgz2flash` simply copies the BASIC program from flash memory to RAM at location `0x28000` from where it can be loaded via the SuperBASIC
+statement `xload` or started by the command `xgo`. 
 
 # Usage
 
@@ -9,6 +13,8 @@ onboard or cartridge flash memory.
 
 ```
 Usage of pgz2flash:
+  -basic string
+    	Path to BASIC program
   -desc string
     	Description shown in lsf
   -name string
@@ -23,15 +29,16 @@ Usage of pgz2flash:
     	Show version information
 ```
 
-Use `-pgz` to specify the file in which the PGZ program which you want to convert is stored. The option `-name` can be used to determine the
+Use `-pgz` or `-basic` to specify the file in which the program which you want to convert is stored. The option `-name` can be used to determine the
 name by which the KUP is listed via `lsf` in DOS. This name must also be used to start the KUP. I.e. when the string `test` is used
 as the value of the `-name` option the program must be started as `/test`. The value of `-desc` can be used to define the program description
 shown by `lsf`. `-out` sets the name of the file in which the conversion result is stored. Before you can run the resulting KUP you have to write
 it either to onboard flash via `FoenixMgr` or to a flash cartridge via `fcart`. The created KUPs are agnostic with respect to their storage 
 location in flash memory. The `-version` option can be used to retrieve version information about your copy of `pgz2flash`. If you intend to write
-the transformation result to onboard flash via `FoenixMgr` you will need separate 8K flash blocks instead of a single cartridge image which is 
-required by `fcart`. Use the option `-onboard` to create the KUP as a collection of 8K blocks which can be processed by `FoenixMgr`. The value 
-of the option `-out` is used to determine the names of the individual blocks and the csv file to control `FoenixMgr`.
+the transformation result to onboard flash via `FoenixMgr` you will need separate files each representing an 8K flash block instead of a single cartridge
+image which is required by `fcart`. Use the option `-onboard` to create the KUP as a collection of 8K blocks which can be processed by `FoenixMgr`.
+In this case the value of the option `-out` is used as a prefix when determining the file names of the individual blocks and the csv file which controls 
+`FoenixMgr`.
 
 When you run `pgz2flash`, information about the structure of the PGZ file which is to be converted is shown. Additionally information about the 
 copy operations (or copy instructions) performed by the loader program are shown. As an example here the data printed when transforming the 
@@ -80,6 +87,34 @@ Copy $0000 bytes from $00:0200 to $00:0000
 
 Overall 17 of 64 copy instructions were used
 ```
+
+Here an additional example which shows the transformation of a SuperBASIC program. The source of `wordguess.bas` is included in this repo so that you can reproduce the results of issuing
+the command `./pgz2flash -basic wordguess.bas -out wordguess.bin -desc "A simple word guessing game in SuperBASIC" -name wordguess` on your machine.
+
+```
+Start address: $000300
+
+PGZ segments:
+=============
+01. Target address $000300, Length $0008F4
+02. Target address $028000, Length $000DFB
+
+Generated copy instructions
+===========================
+---------- Address: $000300 length: $0008F4
+Copy $08F4 bytes from $00:8410 to $00:6300
+---------- Address: $028000 length: $000DFB
+Copy $0DFB bytes from $00:8d04 to $14:6000
+---------- Stop instruction
+Copy $0000 bytes from $00:0300 to $00:0000
+
+Overall 2 of 96 copy instructions were used
+1 flash blocks were used
+
+```
+
+A stub which simply tells the user to press any key to return to BASIC and after that to use `xgo` is written to the address `0x300` and run from there. The BASIC source itself 
+is copied to the address `0x28000` from where it can be loaded by SuperBASIC.
 
 # How does this work?
 
