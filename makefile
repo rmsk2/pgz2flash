@@ -61,6 +61,7 @@ $(STUB).pgz: $(STUB)
 clean: 
 	$(RM) $(FORCE) $(BINARY)
 	$(RM) $(FORCE) $(STUB)
+	$(RM) $(FORCE) $(STUB).pgz
 	$(RM) $(FORCE) $(LABELS)
 	$(RM) $(FORCE) $(TOOL)
 	$(RM) $(FORCE) $(GOLOADER)

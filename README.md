@@ -126,7 +126,7 @@ into 8K blocks and this makes copying data not as straight forward as one would 
 
 # Test results
 
- I have tested the following programs which I could successfully transform into a fully working KUP:
+Amongst others I have tested the following programs which I could successfully transform into a fully working KUP:
 
 - Kooyan (October 2024 game jam)
 - My own 2048 game
@@ -136,6 +136,10 @@ into 8K blocks and this makes copying data not as straight forward as one would 
 - My own snake game (October 2024 game jam)
 - BachHero (October 2024 game jam)
 - The Hallow (October 2024 game jam)
+- My own shanghai clone (April 2025 game jam)
+- A few SuperBASIC programs
+- Missile Command
+- Jewel Keeper
 
 I encountered one case (`spooky.pgz` of the October 2024 game jam) where the resulting KUP would not run correctly. At the moment I assume that this has nothing to do with the
 transformation process but is caused by missing initializations (for instance done by SuperBASIC or `pexec`) on which the software unknowingly depends but which are not happening 
@@ -146,8 +150,8 @@ it did also not fit into the remaining onboard flash.
 
 # Limitations
 
-If your program depends on files which have to be read from a drive for initialization purposes then these files will not become part of the flash image. I expect such programs
-to work just fine as a KUP but they still need their files stored on disk in order to run.
+If your program depends on files which have to be read from a drive for initialization purposes or which are used as overlays then these files will not become part of the flash image.
+I expect such programs to work just fine as a KUP but they still need their files stored on disk in order to run.
 
 # Building the program
 
@@ -171,6 +175,8 @@ If the assembly source code is modified you have to make sure that the following
 Additional modifications have to be performed when the maximum number of copy instructions is to be increased. You have to make room for them by changing the `.fill` directive
 at `ADDR_INSTRUCTIONS` and after that you can adapt `MaxCopyInstructions` on the Go side. Similar preparations have to be made when increasing the space for the program name
 and the description which are stored at `ADDR_DESCRIPTION`. When you use the target `binaries` you can build binaries for the platforms listed below.
+
+The makefile target `stub.pgz` can be used to build the stub as a `.pgz` executable in order to be able to test it without wearing out the flash memory in the cartridge.
 
 # Prebuilt Binaries
 
