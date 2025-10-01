@@ -55,6 +55,8 @@ $(GOSTUB): $(STUB)
 $(STUB): api.asm clut.asm khelp.asm setup.asm stub.asm txtio.asm zeropage.asm
 	64tass --nostart -o $(STUB) stub.asm	
 
+$(STUB).pgz: $(STUB)
+	$(PYTHON) make_pgz.py $(STUB)
 
 clean: 
 	$(RM) $(FORCE) $(BINARY)
