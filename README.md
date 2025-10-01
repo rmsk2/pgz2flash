@@ -198,7 +198,7 @@ on another distribution.
 When you download the executables via the Releases section macOS will refuse to run them. You have to issue the following commands in order to be able to use them. First you have to make 
 sure the file is executable by typing `chmod u+x pgz2flash_mac_arm64` or `chmod u+x pgz2flash_mac_amd64` after that you have to remove the quarantine attribute from the
 files via `xattr -d com.apple.quarantine pgz2flash_mac_arm64` or `xattr -d com.apple.quarantine pgz2flash_mac_amd64`. This could probably be prevented if I would sign the binaries, but
-to be honest, as I am not usually publishing software on macOS I won't pay Apple's developer club membership fee.
+to be honest, as I am not usually publishing software as binaries on macOS I won't pay Apple's developer club membership fee.
 
 ## Using the binaries under Windows
 
